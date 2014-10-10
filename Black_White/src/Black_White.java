@@ -14,7 +14,48 @@ public class Black_White {
 	new Black_White();
 	}
 	
-	
+	void initialvaluematrix(){
+		int[][] matrix=new int[8][8];
+		for(int i=0;i<8;i++){
+		if(i==0|i==7){
+			matrix[i][0]=99;
+			matrix[i][1]=-8;
+			matrix[i][2]=8;
+			matrix[i][3]=6;
+			matrix[i][4]=6;
+			matrix[i][5]=8;
+			matrix[i][6]=-8;
+			matrix[i][7]=99;}
+		else if(i==1|i==6){
+			matrix[i][0]=-8;
+			matrix[i][1]=-24;
+			matrix[i][2]=-4;
+			matrix[i][3]=-3;
+			matrix[i][4]=-3;
+			matrix[i][5]=-4;
+			matrix[i][6]=-24;
+			matrix[i][7]=-8;}
+		else if(i==2|i==5){
+			matrix[i][0]=8;
+			matrix[i][1]=-4;
+			matrix[i][2]=7;
+			matrix[i][3]=4;
+			matrix[i][4]=4;
+			matrix[i][5]=7;
+			matrix[i][6]=-4;
+			matrix[i][7]=8;}
+		else if(i==3|i==4){
+			matrix[i][0]=6;
+			matrix[i][1]=-3;
+			matrix[i][2]=4;
+			matrix[i][3]=0;
+			matrix[i][4]=0;
+			matrix[i][5]=4;
+			matrix[i][6]=-3;
+			matrix[i][7]=6;
+		}
+		}
+	}
 	Black_White()throws FileNotFoundException, IOException
 	{
 		int i=1;
@@ -27,27 +68,26 @@ public class Black_White {
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
         searchway=Integer.parseInt(line);
+        //System.out.println(searchway);
         char currentPlayer;
         int cutoff;
         while (line != null) {
             
             line = br.readLine();
             if(i==1){
-            	searchway=Integer.parseInt(line);
-            	System.out.println(searchway);
-            }else if(i==2){
+            	
             	currentPlayer=line.charAt(0);
-            	System.out.println(currentPlayer);
-            }else if(i==3){
+            	//System.out.println(currentPlayer);
+            }else if(i==2){
             	cutoff=Integer.parseInt(line);
+            	//System.out.println(cutoff);
+            }else if(i>2&&i<11){ 
             	
-            }else if(i>3&&i<12){ 
+            	for(int j=0;j<8;j++){ 
             	
-            	String[] temp=line.split(" ");
-            	for(int j=0;j<temp.length;j++){ 
-            	
-            		board[i-4][j]=temp[j].charAt(0);
-            		System.out.println(board[i-4][j]);
+            		board[i-3][j]=line.charAt(j);
+            		//System.out.println(board[i-3][j]);
+            		
             	}
             }
             i++;
@@ -58,13 +98,9 @@ public class Black_White {
 			
         }finally{
         		br.close();
-        }
-	
-		
-	
+        }	
 		//search(s,t,searchway);
 	
  }
-	
 
 }
