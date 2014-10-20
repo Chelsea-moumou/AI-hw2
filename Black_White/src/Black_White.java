@@ -101,7 +101,7 @@ public class Black_White {
 	
 	try {
 		
-		br = new BufferedReader(new FileReader("./input.txt"));
+		br = new BufferedReader(new FileReader("./input 3.txt"));
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
         searchway=Integer.parseInt(line);
@@ -139,10 +139,10 @@ public class Black_White {
 		play();
 		break;
 	case 2:
-		playMinimax(true,cutoff,8,8);
+		playMinimax(true,cutoff,0,8,8,-1);
 		break;
 	case 3:
-		playAlphabeta(cutoff);
+		playAlphabeta(true,cutoff,0,8,8,Integer.MIN_VALUE,Integer.MAX_VALUE);
 		break;
 	case 4:
 		break;
@@ -151,27 +151,27 @@ public class Black_White {
 	
  }
 	
-	
-	int playMinimax( boolean turn, int cutoff, int oi, int oj) {
+	int playMinimax( boolean turn, int cutoff, int depth, int oi, int oj, int flag) {
 		int max = Integer.MIN_VALUE;
-		int min = Integer.MAX_VALUE;
 		
+		int min = Integer.MAX_VALUE;
+		if(flag==0)flag=-1;
 		String name = "root";
 		if(oi < 8 && oj < 8)
 			name = nameMatrix[oi][oj];
-		
-		
+		else if(oi==8 && oj==8 && depth!=0)
+			name = "pass";
 		
 		if(cutoff == 0) {
 			//changePlayer();
 			int val = value(currentPlayer);
 			//changePlayer();
-			System.out.println( name + "," + String.valueOf(cutoff) + "," + String.valueOf(val));
-		//	System.out.println(val);
+			System.out.println( name + "," + String.valueOf(depth) + "," + String.valueOf(val));
 			return val;
 		}
+
 		
-		System.out.println( name + "," + String.valueOf(cutoff) + "," + String.valueOf(turn?max:min));
+		System.out.println( name + "," + String.valueOf(depth) + "," + String.valueOf(turn?max:min));
 		
 		int resX = 8;
 		int resY = 8;
@@ -179,11 +179,13 @@ public class Black_White {
 			for(int j=0; j<8; j++) {
 				if(board[i][j] == '*') {
 					if(validMove(i,j, currentPlayer)) {
+						if(flag<0)
+						flag++;
 						char[][] tmpBoard = new char[8][8];
 						cloneBoard(tmpBoard, board);
 						move(i,j,currentPlayer, 0);
 						changePlayer();
-						int val = playMinimax(!turn, cutoff-1, i, j);
+						int val = playMinimax(!turn, cutoff-1,depth+1, i, j, flag);
 						changePlayer();
 						if(turn) {
 							if(val > max) {
@@ -199,13 +201,36 @@ public class Black_White {
 							}
 						}
 						board = tmpBoard;
-						System.out.println(name + "," + String.valueOf(cutoff) + "," + String.valueOf(turn?max:min));
+						System.out.println(name + "," + String.valueOf(depth) + "," + String.valueOf(turn?max:min));
 					}
 				}
 			}
 		}
-		
-		
+		if(flag==-1){
+//			String name1="pass";
+//			System.out.println(name1 + "," + String.valueOf(depth+1) + "," + String.valueOf(turn?max:min));
+			int val = playMinimax(!turn, cutoff-1,depth+1, oi, oj,flag-1);
+			if(turn) {
+				if(val > max) {
+					max = val;
+					
+				}
+			} else {
+				if(val < min) {
+					min = val;
+					
+				}
+			
+		}
+			
+		}
+		if(flag==-2) {
+			
+			int val = value(currentPlayer);
+			System.out.println( name + "," + String.valueOf(depth+1) + "," + String.valueOf(val));
+			return val;
+		}
+
 		
 		if(turn)
 			return max;
@@ -220,9 +245,75 @@ public class Black_White {
 			currentPlayer = 'X';
 		}
 	}
-	void playAlphabeta(int cutoff){
-		
-	}
+	
+		int playAlphabeta( boolean turn, int cutoff, int depth, int oi, int oj, int alpha, int beta) {
+			int max = Integer.MIN_VALUE;
+			
+			int min = Integer.MAX_VALUE;
+			
+			String name = "root";
+			if(oi < 8 && oj < 8)
+				name = nameMatrix[oi][oj];
+			
+			if(cutoff == 0) {
+				//changePlayer();
+				int val = value(currentPlayer);
+				//changePlayer();
+				System.out.println( name + "," + String.valueOf(depth) + "," + String.valueOf(val)+ "," + String.valueOf(turn?alpha:val)+","+String.valueOf(turn?beta:val));
+				return val;
+			}
+			
+			
+			System.out.print( name + "," + String.valueOf(depth) + "," + String.valueOf(turn?max:min) +"," + String.valueOf(alpha)+","+String.valueOf(beta)+'\n');
+			
+			int resX = 8;
+			int resY = 8;
+			for(int i=0; i<8; i++) {
+				for(int j=0; j<8; j++) {
+					if(board[i][j] == '*') {
+						if(validMove(i,j, currentPlayer)) {
+							char[][] tmpBoard = new char[8][8];
+							cloneBoard(tmpBoard, board);
+							move(i,j,currentPlayer, 0);
+							changePlayer();
+							int val = playAlphabeta(!turn, cutoff-1,depth+1, i, j, alpha, beta);
+							changePlayer();
+							if(turn) {
+								if(val > max) {
+									max = val;
+									resX = i;
+									resY = j;
+									alpha=Math.max(alpha, playAlphabeta(!turn, cutoff-1,depth+1, i, j, alpha, beta));
+									if(alpha>beta||alpha==beta){
+										return beta;
+									}
+								}
+							} else {
+								if(val < min) {
+									min = val;
+									resX = i;
+									resY = j;
+									beta=Math.min(beta, playAlphabeta(!turn, cutoff-1,depth+1, i, j, alpha, beta));
+									if(alpha>beta||alpha==beta){
+										return alpha;
+									}
+								}
+							}
+							board = tmpBoard;
+							System.out.println(name + "," + String.valueOf(depth) + "," + String.valueOf(turn?max:min) +"," + String.valueOf(alpha)+","+String.valueOf(beta));
+						}
+					}
+				}
+			}
+			
+			
+			if(turn)
+				return max;
+			else
+				return min;
+		}
+			
+	
 	
 	int value(char current){
 		int value=0;
@@ -248,9 +339,10 @@ public class Black_White {
 	
 	void play()
 	{
+		String log = null;
 		//int passFlag=-2;
 		//while(passFlag<0){
-		int optimalValue=-99;
+		int optimalValue=Integer.MIN_VALUE;
 		int bestX=8,bestY=8;
 		for(int i=0;i<8;i++){
 			for(int j=0; j<8;j++){
@@ -258,7 +350,7 @@ public class Black_White {
 					if(validMove(i,j,currentPlayer)){
 						move(i,j,currentPlayer,2);
 						int value=value(currentPlayer);
-						System.out.println(value);
+						//System.out.println(value);
 						if(optimalValue<value){
 							optimalValue=value;
 							bestX=i;
@@ -274,24 +366,27 @@ public class Black_White {
 			board[bestX][bestY]=currentPlayer;
 			move(bestX,bestY,currentPlayer,0);
 			for(int i=0;i<8;i++){
-				System.out.println();
 				for(int j=0; j<8;j++){
 					System.out.print(board[i][j]);
-					
+					log=log+String.valueOf(board[i][j]);
 							}
-						}
-			System.out.println();
+				log=log+'\n';
+				System.out.println();
+				}
+			
 		}else{
 			//String log="pass";
 			//System.out.println("pass");
 			for(int i=0;i<8;i++){
-				System.out.println();
 				
 				for(int j=0; j<8;j++){
 					System.out.print(board[i][j]);
+					log=log+String.valueOf(board[i][j]);
 							}
+				log=log+'\n';
+				System.out.println();
 						}
-			System.out.println();
+			
 			//passFlag++;
 		}
 
@@ -302,7 +397,8 @@ public class Black_White {
 			}
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
-			//bw.write(log);
+			log=log.substring(4);
+			bw.write(log);
 			bw.close();
 		}catch (IOException e) {
 			e.printStackTrace();}
@@ -317,8 +413,10 @@ public class Black_White {
 	void move(int currentX, int currentY, char current, int searchway){
 	    char[][] temp1 = new char[8][8];
 	    cloneBoard(temp1, board);
+	    
 		char opposite;
-	    	int x=currentX;
+		board[currentX][currentY]=current;
+     		int x=currentX;
 			int y=currentY;
 			if(current=='X'){
 				opposite='O';
@@ -343,8 +441,7 @@ public class Black_White {
 				}
 				
 			}
-			 x=currentX;
-			 y=currentY;
+			
 			//up-right
 			 x=currentX;
 			 y=currentY;
@@ -482,7 +579,7 @@ public class Black_White {
 				}
 				
 			}
-			board[currentX][currentY]=current;
+			
 			temp = board;
 			if(searchway==2){
 				
