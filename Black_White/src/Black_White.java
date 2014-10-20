@@ -5,12 +5,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Black_White {
 	
 	char[][] board = new char[8][8];
+	char[][] temp=board;
 	int[][] matrix=new int[8][8];
+	String[][] nameMatrix=new String[8][8];
 	char currentPlayer;
     int cutoff;
 	public static void main(String[] args) throws FileNotFoundException, IOException
@@ -59,6 +63,36 @@ public class Black_White {
 			matrix[i][7]=6;
 		}
 		}
+		for(int i=0;i<8;i++){
+			for(int j=0;j<8;j++){
+			if(i==0){
+				nameMatrix[i][j]="a"+(j+1);
+				//System.out.println(nameMatrix[i][j]);
+				}
+			else if(i==1){
+				nameMatrix[i][j]="b"+(j+1);
+				}
+			else if(i==2){
+				nameMatrix[i][j]="c"+(j+1);
+				}
+			else if(i==3){
+				nameMatrix[i][j]="d"+(j+1);
+				}
+			else if(i==4){
+				nameMatrix[i][j]="e"+(j+1);
+				}
+			else if(i==5){
+				nameMatrix[i][j]="f"+(j+1);
+				}
+			else if(i==6){
+				nameMatrix[i][j]="g"+(j+1);
+				}
+			else if(i==7){
+				nameMatrix[i][j]="h"+(j+1);
+				}
+			}
+		}
+		
 	}
 	Black_White()throws FileNotFoundException, IOException
 	{
@@ -102,13 +136,105 @@ public class Black_White {
         		br.close();
         }	
 	initialvaluematrix();
-	play();
+	switch(searchway){
+	case 1:
+		play();
+		break;
+	case 2:
+		playMinimax(cutoff,searchway);
+		break;
+	case 3:
+		playAlphabeta(cutoff);
+		break;
+	case 4:
+		break;
+	
+	}
+	
  }
 	
+	void playMinimax(int cutoff,int searchway){
+		List<Node> open= new ArrayList<Node>();
+		List<Node> closed= new ArrayList<Node>();
+		Node node=new Node(0,-1,"root",0,1,-999);
+		open.add(node);
+		
+		int currentId = 0;
+		while(!open.isEmpty())
+		{
+			Node currentNode=getNext(open);
+			int childLength=0;
+			if(currentNode.depth<cutoff+1){
+			for(int i=0;i<8;i++){
+				for(int j=0; j<8;j++){
+					if(board[i][j]=='*'){
+						if(validMove(i,j,currentPlayer)){
+							childLength++;
+							int tempValue=0;
+							if(currentNode.depth<cutoff){
+								if(currentNode.minimax==1){
+									tempValue=999;
+								}else{tempValue=-999;}
+							}else if(currentNode.depth==cutoff){
+								move(i,j,currentPlayer,searchway);
+								tempValue=value(currentPlayer);}
+							
+							Node childNode=new Node(currentId+childLength,currentId,nameMatrix[i][j],-currentNode.minimax,currentNode.depth+1,tempValue);
+						    open.add(childNode);
+						}
+						
+					}
+				}
+			}
+			
+			}
+		}
+	}
+	void playAlphabeta(int cutoff){
+		
+	}
+	
+	int value(char current){
+		int value=0;
+		char opposite;
+    	
+		if(current=='X'){
+			opposite='O';
+		}else{
+			opposite='X';
+		}
+		for(int i=0;i<8;i++){
+			for(int j=0; j<8;j++){
+				if(temp[i][j]==current){
+				value=value+temp[i][j];
+				}else if(temp[i][j]==opposite){
+				value=value-temp[i][j];
+				}			
+						}
+					}	
+	return value;
+	}
+	
+	public Node getNext(List<Node> open)
+	{
+		List<Node> sort_open=new ArrayList<Node>(open);
+	
+		Collections.sort(sort_open);
+		Node nextNode = sort_open.get(0);
+		for(int i=0;i<open.size();i++) {
+			Node node = open.get(i);
+			if(nextNode.id == node.id) {
+				open.remove(i);
+				break;
+			}
+		}
+		
+		return nextNode;
+	}
 	void play()
 	{
-		int passFlag=-2;
-		while(passFlag<0){
+		//int passFlag=-2;
+		//while(passFlag<0){
 		int optimalValue=-99;
 		int bestX=8,bestY=8;
 		for(int i=0;i<8;i++){
@@ -126,33 +252,36 @@ public class Black_White {
 			}
 		}
 		if(bestX!=8&&bestY!=8){
+			//String log;
 			board[bestX][bestY]=currentPlayer;
-			move(bestX,bestY,currentPlayer);
+			move(bestX,bestY,currentPlayer,0);
 			for(int i=0;i<8;i++){
 				System.out.println();
 				for(int j=0; j<8;j++){
 					System.out.print(board[i][j]);
+					
 							}
 						}
 			System.out.println();
 		}else{
-			String log="pass";
-			System.out.println("pass");
+			//String log="pass";
+			//System.out.println("pass");
 			for(int i=0;i<8;i++){
 				System.out.println();
+				
 				for(int j=0; j<8;j++){
 					System.out.print(board[i][j]);
 							}
 						}
 			System.out.println();
-			passFlag++;
+			//passFlag++;
 		}
 		//change currentPlayer
-		if(currentPlayer=='X'){
-			currentPlayer='O';
-		}else{
-			currentPlayer='X';
-		}
+//		if(currentPlayer=='X'){
+//			currentPlayer='O';
+//		}else{
+//			currentPlayer='X';
+//		}
 		try{
 			File file = new File("./output.txt");
 			if (!file.exists()) {
@@ -164,11 +293,12 @@ public class Black_White {
 			bw.close();
 		}catch (IOException e) {
 			e.printStackTrace();}
-		}
+		//}
 	}
 	
-	    void move(int currentX, int currentY, char current){
-	    	char opposite;
+	void move(int currentX, int currentY, char current, int searchway){
+	    char[][] temp1=board;
+		char opposite;
 	    	int x=currentX;
 			int y=currentY;
 			if(current=='X'){
@@ -333,8 +463,12 @@ public class Black_White {
 				}
 				
 			}
+			if(searchway==2){
+				temp=board;
+				board=temp1;
+			}
 	    }
-		boolean validMove(int currentX, int currentY, char current){
+    boolean validMove(int currentX, int currentY, char current){
 			char opposite;
 			int x=currentX;
 			int y=currentY;
