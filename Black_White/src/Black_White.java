@@ -65,30 +65,29 @@ public class Black_White {
 		}
 		for(int i=0;i<8;i++){
 			for(int j=0;j<8;j++){
-			if(i==0){
-				nameMatrix[i][j]="a"+(j+1);
-				//System.out.println(nameMatrix[i][j]);
+			if(j==0){
+				nameMatrix[i][j]="a"+(i+1);
 				}
-			else if(i==1){
-				nameMatrix[i][j]="b"+(j+1);
+			else if(j==1){
+				nameMatrix[i][j]="b"+(i+1);
 				}
-			else if(i==2){
-				nameMatrix[i][j]="c"+(j+1);
+			else if(j==2){
+				nameMatrix[i][j]="c"+(i+1);
 				}
-			else if(i==3){
-				nameMatrix[i][j]="d"+(j+1);
+			else if(j==3){
+				nameMatrix[i][j]="d"+(i+1);
 				}
-			else if(i==4){
-				nameMatrix[i][j]="e"+(j+1);
+			else if(j==4){
+				nameMatrix[i][j]="e"+(i+1);
 				}
-			else if(i==5){
-				nameMatrix[i][j]="f"+(j+1);
+			else if(j==5){
+				nameMatrix[i][j]="f"+(i+1);
 				}
-			else if(i==6){
-				nameMatrix[i][j]="g"+(j+1);
+			else if(j==6){
+				nameMatrix[i][j]="g"+(i+1);
 				}
-			else if(i==7){
-				nameMatrix[i][j]="h"+(j+1);
+			else if(j==7){
+				nameMatrix[i][j]="h"+(i+1);
 				}
 			}
 		}
@@ -123,7 +122,6 @@ public class Black_White {
             	for(int j=0;j<8;j++){ 
             	
             		board[i-3][j]=line.charAt(j);
-            		//System.out.println(board[i-3][j]);	
             	}
             }
             i++;
@@ -141,7 +139,7 @@ public class Black_White {
 		play();
 		break;
 	case 2:
-		playMinimax(cutoff,searchway);
+		playMinimax(true,cutoff,8,8);
 		break;
 	case 3:
 		playAlphabeta(cutoff);
@@ -153,41 +151,73 @@ public class Black_White {
 	
  }
 	
-	void playMinimax(int cutoff,int searchway){
-		List<Node> open= new ArrayList<Node>();
-		List<Node> closed= new ArrayList<Node>();
-		Node node=new Node(0,-1,"root",0,1,-999);
-		open.add(node);
+	
+	int playMinimax( boolean turn, int cutoff, int oi, int oj) {
+		int max = Integer.MIN_VALUE;
+		int min = Integer.MAX_VALUE;
 		
-		int currentId = 0;
-		while(!open.isEmpty())
-		{
-			Node currentNode=getNext(open);
-			int childLength=0;
-			if(currentNode.depth<cutoff+1){
-			for(int i=0;i<8;i++){
-				for(int j=0; j<8;j++){
-					if(board[i][j]=='*'){
-						if(validMove(i,j,currentPlayer)){
-							childLength++;
-							int tempValue=0;
-							if(currentNode.depth<cutoff){
-								if(currentNode.minimax==1){
-									tempValue=999;
-								}else{tempValue=-999;}
-							}else if(currentNode.depth==cutoff){
-								move(i,j,currentPlayer,searchway);
-								tempValue=value(currentPlayer);}
-							
-							Node childNode=new Node(currentId+childLength,currentId,nameMatrix[i][j],-currentNode.minimax,currentNode.depth+1,tempValue);
-						    open.add(childNode);
+		String name = "root";
+		if(oi < 8 && oj < 8)
+			name = nameMatrix[oi][oj];
+		
+		
+		
+		if(cutoff == 0) {
+			//changePlayer();
+			int val = value(currentPlayer);
+			//changePlayer();
+			System.out.println( name + "," + String.valueOf(cutoff) + "," + String.valueOf(val));
+		//	System.out.println(val);
+			return val;
+		}
+		
+		System.out.println( name + "," + String.valueOf(cutoff) + "," + String.valueOf(turn?max:min));
+		
+		int resX = 8;
+		int resY = 8;
+		for(int i=0; i<8; i++) {
+			for(int j=0; j<8; j++) {
+				if(board[i][j] == '*') {
+					if(validMove(i,j, currentPlayer)) {
+						char[][] tmpBoard = new char[8][8];
+						cloneBoard(tmpBoard, board);
+						move(i,j,currentPlayer, 0);
+						changePlayer();
+						int val = playMinimax(!turn, cutoff-1, i, j);
+						changePlayer();
+						if(turn) {
+							if(val > max) {
+								max = val;
+								resX = i;
+								resY = j;
+							}
+						} else {
+							if(val < min) {
+								min = val;
+								resX = i;
+								resY = j;
+							}
 						}
-						
+						board = tmpBoard;
+						System.out.println(name + "," + String.valueOf(cutoff) + "," + String.valueOf(turn?max:min));
 					}
 				}
 			}
-			
-			}
+		}
+		
+		
+		
+		if(turn)
+			return max;
+		else
+			return min;
+	}
+	
+	void changePlayer() {
+		if(currentPlayer == 'X') {
+			currentPlayer = 'O';
+		} else {
+			currentPlayer = 'X';
 		}
 	}
 	void playAlphabeta(int cutoff){
@@ -206,31 +236,16 @@ public class Black_White {
 		for(int i=0;i<8;i++){
 			for(int j=0; j<8;j++){
 				if(temp[i][j]==current){
-				value=value+temp[i][j];
+				value=value+matrix[i][j];
 				}else if(temp[i][j]==opposite){
-				value=value-temp[i][j];
+				value=value-matrix[i][j];
 				}			
 						}
 					}	
 	return value;
 	}
 	
-	public Node getNext(List<Node> open)
-	{
-		List<Node> sort_open=new ArrayList<Node>(open);
 	
-		Collections.sort(sort_open);
-		Node nextNode = sort_open.get(0);
-		for(int i=0;i<open.size();i++) {
-			Node node = open.get(i);
-			if(nextNode.id == node.id) {
-				open.remove(i);
-				break;
-			}
-		}
-		
-		return nextNode;
-	}
 	void play()
 	{
 		//int passFlag=-2;
@@ -241,8 +256,11 @@ public class Black_White {
 			for(int j=0; j<8;j++){
 				if(board[i][j]=='*'){
 					if(validMove(i,j,currentPlayer)){
-						if(optimalValue<matrix[i][j]){
-							optimalValue=matrix[i][j];
+						move(i,j,currentPlayer,2);
+						int value=value(currentPlayer);
+						System.out.println(value);
+						if(optimalValue<value){
+							optimalValue=value;
 							bestX=i;
 							bestY=j;
 						}
@@ -276,12 +294,7 @@ public class Black_White {
 			System.out.println();
 			//passFlag++;
 		}
-		//change currentPlayer
-//		if(currentPlayer=='X'){
-//			currentPlayer='O';
-//		}else{
-//			currentPlayer='X';
-//		}
+
 		try{
 			File file = new File("./output.txt");
 			if (!file.exists()) {
@@ -296,8 +309,14 @@ public class Black_White {
 		//}
 	}
 	
+	private void cloneBoard(char[][] aim, char[][] origin) {
+		for(int i = 0; i< 8; i++)
+			for(int j=0; j<8; j++)
+				aim[i][j] = origin[i][j];
+	}
 	void move(int currentX, int currentY, char current, int searchway){
-	    char[][] temp1=board;
+	    char[][] temp1 = new char[8][8];
+	    cloneBoard(temp1, board);
 		char opposite;
 	    	int x=currentX;
 			int y=currentY;
@@ -309,7 +328,7 @@ public class Black_White {
 			//right
 			
 			while(y<7){
-				if(board[x][y+1]=='*'|board[x][y+1]==current){
+				if(board[x][y+1]=='*'||board[x][y+1]==current){
 					break;
 				}else if(board[x][y+1]==opposite){
 					y=y+1;
@@ -330,7 +349,7 @@ public class Black_White {
 			 x=currentX;
 			 y=currentY;
 			while(y<7&&x>0){
-				if(board[x-1][y+1]=='*'|board[x-1][y+1]==current){
+				if(board[x-1][y+1]=='*'||board[x-1][y+1]==current){
 					break;
 				}else if(board[x-1][y+1]==opposite){
 					y=y+1;
@@ -350,7 +369,7 @@ public class Black_White {
 			x=currentX;
 			y=currentY;
 			while(y<7&&x<7){
-				if(board[x+1][y+1]=='*'|board[x+1][y+1]==current){
+				if(board[x+1][y+1]=='*'||board[x+1][y+1]==current){
 					break;
 				}else if(board[x+1][y+1]==opposite){
 					y=y+1;
@@ -370,7 +389,7 @@ public class Black_White {
 			x=currentX;
 			y=currentY;
 			while(x>0){
-				if(board[x-1][y]=='*'|board[x-1][y]==current){
+				if(board[x-1][y]=='*'||board[x-1][y]==current){
 					break;
 				}else if(board[x-1][y]==opposite){
 					
@@ -390,7 +409,7 @@ public class Black_White {
 			x=currentX;
 			y=currentY;
 			while(y>0){
-				if(board[x][y-1]=='*'|board[x][y-1]==current){
+				if(board[x][y-1]=='*'||board[x][y-1]==current){
 					break;
 				}else if(board[x][y-1]==opposite){
 					y=y-1;
@@ -408,7 +427,7 @@ public class Black_White {
 			x=currentX;
 			y=currentY;
 			while(y>0&&x>0){
-				if(board[x-1][y-1]=='*'|board[x-1][y-1]==current){
+				if(board[x-1][y-1]=='*'||board[x-1][y-1]==current){
 					break;
 				}else if(board[x-1][y-1]==opposite){
 					y=y-1;
@@ -428,7 +447,7 @@ public class Black_White {
 			x=currentX;
 			y=currentY;
 			while(y>0&&x<7){
-				if(board[x+1][y-1]=='*'|board[x+1][y-1]==current){
+				if(board[x+1][y-1]=='*'||board[x+1][y-1]==current){
 					break;
 				}else if(board[x+1][y-1]==opposite){
 					y=y-1;
@@ -448,7 +467,7 @@ public class Black_White {
 			x=currentX;
 			y=currentY;
 			while(x<7){
-				if(board[x+1][y]=='*'|board[x+1][y]==current){
+				if(board[x+1][y]=='*'||board[x+1][y]==current){
 					break;
 				}else if(board[x+1][y]==opposite){
 					x=x+1;
@@ -463,8 +482,10 @@ public class Black_White {
 				}
 				
 			}
+			board[currentX][currentY]=current;
+			temp = board;
 			if(searchway==2){
-				temp=board;
+				
 				board=temp1;
 			}
 	    }
