@@ -1,0 +1,11 @@
+2
+X
+3
+*OXXXXOX
+X**XXX*O
+*XXXOOX*
+*OXO*OO*
+X*OX**OO
+*OOXO*XO
+XXXOO*XO
+*X*XX*O*
