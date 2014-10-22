@@ -379,7 +379,11 @@ public class Black_White {
 									resX = i;
 									resY = j;
 									
-									
+									if(val>=beta){
+										log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
+										System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+										return val;
+									}
 									alpha=Math.max(alpha, val);
 									
 									if(alpha>=beta){
@@ -395,7 +399,11 @@ public class Black_White {
 									resX = i;
 									resY = j;
 									
-									
+									if(val<=alpha){
+										log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
+										System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+										return val;
+									}
 									beta=Math.min(beta, val);
 									
 									if(alpha>=beta){
@@ -422,8 +430,13 @@ public class Black_White {
 				if(turn) {
 					if(val > max) {
 						max = val;
-						alpha=Math.max(alpha, val);
 						
+						if(val>=beta){
+							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
+							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+							return val;
+						}
+						alpha=Math.max(alpha, val);
 						if(alpha>=beta){
 							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
 							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
@@ -434,8 +447,13 @@ public class Black_White {
 				} else {
 					if(val < min) {
 						min = val;
-						beta=Math.min(beta, val);
 						
+						if(val<=alpha){
+							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
+							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+							return val;
+						}
+						beta=Math.min(beta, val);
 						if(alpha>=beta){
 							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
 							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
