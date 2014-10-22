@@ -106,7 +106,7 @@ public class Black_White {
 	
 	try {
 		
-		br = new BufferedReader(new FileReader("./input 3.txt"));
+		br = new BufferedReader(new FileReader("./input.txt"));
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
         searchway=Integer.parseInt(line);
@@ -147,16 +147,16 @@ public class Black_White {
 		log="Node,Depth,Value"+"\n";
 		playMinimax(true,cutoff,0,8,8,-1);
 		
-		System.out.println(String.valueOf(gresX) + "," + String.valueOf(gresY));
+		//System.out.println(String.valueOf(gresX) + "," + String.valueOf(gresY));
 		if(gresX!=8&&gresY!=8)
 		{move(gresX,gresY,currentPlayer_static,0);}
 		for(int m=0;m<8;m++){
 			for(int n=0; n<8;n++){
-				System.out.print(board[m][n]);
+				//System.out.print(board[m][n]);
 				boardBestmove+=String.valueOf(board[m][n]);
 						}
 			boardBestmove+='\n';
-			System.out.println();
+			//System.out.println();
 			}
 		boardBestmove=boardBestmove.substring(4);
 		try{
@@ -173,18 +173,18 @@ public class Black_White {
 			e.printStackTrace();}
 		break;
 	case 3:
-		log="Node,Depth,Value,alpha,beta"+"\n";
+		log="Node,Depth,Value,Alpha,Beta"+"\n";
 		playAlphabeta(true,cutoff,0,8,8,-1,Integer.MIN_VALUE,Integer.MAX_VALUE);
-		System.out.println(String.valueOf(gresX) + "," + String.valueOf(gresY));
+		//System.out.println(String.valueOf(gresX) + "," + String.valueOf(gresY));
 		if(gresX!=8&&gresY!=8)
 		{move(gresX,gresY,currentPlayer_static,0);}
 		for(int m=0;m<8;m++){
 			for(int n=0; n<8;n++){
-				System.out.print(board[m][n]);
+				//System.out.print(board[m][n]);
 				boardBestmove+=String.valueOf(board[m][n]);
 						}
 			boardBestmove+='\n';
-			System.out.println();
+			//System.out.println();
 			}
 		boardBestmove=boardBestmove.substring(4);
 		try{
@@ -235,12 +235,12 @@ public class Black_White {
 			//changePlayer();
 			
 			log+=name + "," + String.valueOf(depth) + "," + displayINF(val)+'\n';
-			System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(val));
+			//System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(val));
 			return val;
 		}
         
 		log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+"\n";
-		System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min));
+		//System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min));
 		
 		int resX = 8;
 		int resY = 8;
@@ -271,7 +271,7 @@ public class Black_White {
 						}
 						board = tmpBoard;
 						log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+"\n";
-						System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min));
+						//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min));
 					}
 				}
 			}
@@ -292,7 +292,7 @@ public class Black_White {
 				}
 			}
 			log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+"\n";
-			System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min));
+			//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min));
 			if(depth == 0) {
 				gresX = resX;
 				gresY = resY;
@@ -305,7 +305,7 @@ public class Black_White {
 			
 			int val = value(currentPlayer_static);
 			log+= name + "," + String.valueOf(depth+1) + "," + displayINF(val)+"\n";
-			System.out.println( name + "," + String.valueOf(depth+1) + "," + displayINF(val));
+			//System.out.println( name + "," + String.valueOf(depth+1) + "," + displayINF(val));
 			if(depth == 0) {
 				gresX = resX;
 				gresY = resY;
@@ -351,13 +351,13 @@ public class Black_White {
 				//changePlayer();
 				
 				log+=name + "," + String.valueOf(depth) + "," + displayINF(val)+ ","+displayINF(alpha)+","+displayINF(beta)+'\n';
-				System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(val)+","+displayINF(alpha)+","+displayINF(beta));
+				//System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(val)+","+displayINF(alpha)+","+displayINF(beta));
 				
 				return val;
 			}
 	        
 			log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-			System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+			//System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 			
 			int resX = 8;
 			int resY = 8;
@@ -381,14 +381,14 @@ public class Black_White {
 									
 									if(val>=beta){
 										log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-										System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+										//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 										return val;
 									}
 									alpha=Math.max(alpha, val);
 									
 									if(alpha>=beta){
 										log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-										System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+										//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 										
 										return beta;
 									}
@@ -401,7 +401,7 @@ public class Black_White {
 									
 									if(val<=alpha){
 										log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-										System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+										//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 										return val;
 									}
 									beta=Math.min(beta, val);
@@ -409,7 +409,7 @@ public class Black_White {
 									if(alpha>=beta){
 										
 										log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-										System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+										//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 										
 										return alpha;
 									}
@@ -418,7 +418,7 @@ public class Black_White {
 							
 							board = tmpBoard;
 							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+							//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 						}
 					}
 				}
@@ -433,13 +433,13 @@ public class Black_White {
 						
 						if(val>=beta){
 							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+							//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 							return val;
 						}
 						alpha=Math.max(alpha, val);
 						if(alpha>=beta){
 							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+							//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 
 							return beta;
 						}
@@ -450,13 +450,13 @@ public class Black_White {
 						
 						if(val<=alpha){
 							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+							//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 							return val;
 						}
 						beta=Math.min(beta, val);
 						if(alpha>=beta){
 							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+							//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 
 							return alpha;
 						}
@@ -467,7 +467,7 @@ public class Black_White {
 					gresY = resY;
 				}
 				log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
-				System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+				//System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
 				return val;
 			
 				
@@ -476,7 +476,7 @@ public class Black_White {
 				
 				int val = value(currentPlayer_static);
 				log+=name + "," + String.valueOf(depth) + "," + displayINF(val)+ ","+displayINF(alpha)+","+displayINF(beta)+'\n';
-				System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(val)+","+displayINF(alpha)+","+displayINF(beta));
+				//System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(val)+","+displayINF(alpha)+","+displayINF(beta));
 				if(depth == 0) {
 					gresX = resX;
 					gresY = resY;
@@ -550,11 +550,11 @@ public class Black_White {
 			move(bestX,bestY,currentPlayer,0);
 			for(int i=0;i<8;i++){
 				for(int j=0; j<8;j++){
-					System.out.print(board[i][j]);
+					//System.out.print(board[i][j]);
 					log=log+String.valueOf(board[i][j]);
 							}
 				log=log+'\n';
-				System.out.println();
+				//System.out.println();
 				}
 			
 		}else{
@@ -563,11 +563,11 @@ public class Black_White {
 			for(int i=0;i<8;i++){
 				
 				for(int j=0; j<8;j++){
-					System.out.print(board[i][j]);
+					//System.out.print(board[i][j]);
 					log=log+String.valueOf(board[i][j]);
 							}
 				log=log+'\n';
-				System.out.println();
+				//System.out.println();
 						}
 			
 			//passFlag++;
