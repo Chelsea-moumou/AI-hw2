@@ -20,6 +20,8 @@ public class Black_White {
     int cutoff;
     String log;
     String boardBestmove;
+    int gresX;
+    int gresY;
 	public static void main(String[] args) throws FileNotFoundException, IOException
 	{	
 	new Black_White();
@@ -104,7 +106,7 @@ public class Black_White {
 	
 	try {
 		
-		br = new BufferedReader(new FileReader("./input 4.txt"));
+		br = new BufferedReader(new FileReader("./input 3.txt"));
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
         searchway=Integer.parseInt(line);
@@ -145,6 +147,9 @@ public class Black_White {
 		log="Node,Depth,Value"+"\n";
 		playMinimax(true,cutoff,0,8,8,-1);
 		
+		System.out.println(String.valueOf(gresX) + "," + String.valueOf(gresY));
+		if(gresX!=8&&gresY!=8)
+		{move(gresX,gresY,currentPlayer_static,0);}
 		for(int m=0;m<8;m++){
 			for(int n=0; n<8;n++){
 				System.out.print(board[m][n]);
@@ -170,7 +175,9 @@ public class Black_White {
 	case 3:
 		log="Node,Depth,Value,alpha,beta"+"\n";
 		playAlphabeta(true,cutoff,0,8,8,-1,Integer.MIN_VALUE,Integer.MAX_VALUE);
-		
+		System.out.println(String.valueOf(gresX) + "," + String.valueOf(gresY));
+		if(gresX!=8&&gresY!=8)
+		{move(gresX,gresY,currentPlayer_static,0);}
 		for(int m=0;m<8;m++){
 			for(int n=0; n<8;n++){
 				System.out.print(board[m][n]);
@@ -286,6 +293,10 @@ public class Black_White {
 			}
 			log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+"\n";
 			System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min));
+			if(depth == 0) {
+				gresX = resX;
+				gresY = resY;
+			}
 			return val;
 		
 			
@@ -295,15 +306,23 @@ public class Black_White {
 			int val = value(currentPlayer_static);
 			log+= name + "," + String.valueOf(depth+1) + "," + displayINF(val)+"\n";
 			System.out.println( name + "," + String.valueOf(depth+1) + "," + displayINF(val));
+			if(depth == 0) {
+				gresX = resX;
+				gresY = resY;
+			}
 			return val;
 		}
-
+		
+		if(depth == 0) {
+			gresX = resX;
+			gresY = resY;
+		}
 		
 		if(turn)
-			{move(resX,resY,currentPlayer,0);
+			{//move(resX,resY,currentPlayer,0);
 			return max;}
 		else
-		    {move(resX,resY,currentPlayer,0);
+		    {//move(resX,resY,currentPlayer,0);
 			return min;}
 	}
 	void changePlayer() {
@@ -331,8 +350,6 @@ public class Black_White {
 				int val = value(currentPlayer_static);
 				//changePlayer();
 				
-//				log+=name + "," + String.valueOf(depth) + "," + displayINF(val)+ ","+displayINF(turn?alpha:val)+","+displayINF(turn?beta:val)+'\n';
-//				System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(val)+","+displayINF(turn?alpha:val)+","+displayINF(turn?beta:val));
 				log+=name + "," + String.valueOf(depth) + "," + displayINF(val)+ ","+displayINF(alpha)+","+displayINF(beta)+'\n';
 				System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(val)+","+displayINF(alpha)+","+displayINF(beta));
 				
@@ -361,11 +378,14 @@ public class Black_White {
 									max = val;
 									resX = i;
 									resY = j;
-									changePlayer();
-									//alpha=Math.max(alpha, playAlphabeta(!turn, cutoff-1,depth+1, i, j,-1, alpha, beta));
+									
+									
 									alpha=Math.max(alpha, val);
-									changePlayer();
+									
 									if(alpha>=beta){
+										log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
+										System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+										
 										return beta;
 									}
 								}
@@ -374,15 +394,20 @@ public class Black_White {
 									min = val;
 									resX = i;
 									resY = j;
-									changePlayer();
-									//beta=Math.min(beta, playAlphabeta(!turn, cutoff-1,depth+1, i, j,-1, alpha, beta));
+									
+									
 									beta=Math.min(beta, val);
-									changePlayer();
+									
 									if(alpha>=beta){
+										
+										log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
+										System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+										
 										return alpha;
 									}
 								}
 							}
+							
 							board = tmpBoard;
 							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
 							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
@@ -397,24 +422,31 @@ public class Black_White {
 				if(turn) {
 					if(val > max) {
 						max = val;
-						changePlayer();
-						//alpha=Math.max(alpha, playAlphabeta(!turn, cutoff-1,depth+1, 8, 8,-1, alpha, beta));
 						alpha=Math.max(alpha, val);
-						changePlayer();
+						
 						if(alpha>=beta){
+							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
+							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+
 							return beta;
 						}
 					}
 				} else {
 					if(val < min) {
 						min = val;
-						changePlayer();
 						beta=Math.min(beta, val);
-						changePlayer();
+						
 						if(alpha>=beta){
+							log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
+							System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
+
 							return alpha;
 						}
 					}
+				}
+				if(depth == 0) {
+					gresX = resX;
+					gresY = resY;
 				}
 				log+=name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta)+"\n";
 				System.out.println(name + "," + String.valueOf(depth) + "," + displayINF(turn?max:min)+","+displayINF(alpha)+","+displayINF(beta));
@@ -427,16 +459,22 @@ public class Black_White {
 				int val = value(currentPlayer_static);
 				log+=name + "," + String.valueOf(depth) + "," + displayINF(val)+ ","+displayINF(alpha)+","+displayINF(beta)+'\n';
 				System.out.println( name + "," + String.valueOf(depth) + "," + displayINF(val)+","+displayINF(alpha)+","+displayINF(beta));
-				
+				if(depth == 0) {
+					gresX = resX;
+					gresY = resY;
+				}
 				return val;
 			}
-
+			if(depth == 0) {
+				gresX = resX;
+				gresY = resY;
+			}
 			
 			if(turn)
-				{move(resX,resY,currentPlayer,0);
+				{
 				return max;}
 			else
-			    {move(resX,resY,currentPlayer,0);
+			    {
 				return min;}
 		
 	}
